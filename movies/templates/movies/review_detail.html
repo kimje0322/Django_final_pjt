@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block body %}
+  <a href="{% url 'movies:movie_detail' movie.pk %}"><button class="btn btn-primary">뒤로가기</button></a>
+  <div class="entire cover">
+    <div class="container mt-2">
+      <h1 class="pt-3">{{ review.title }}</h1>
+      <hr>
+      <p><i class="fas fa-user"></i> <strong>{{ review.user.username }}</strong>
+      <span class="written">
+       {{ review.created_at }} 작성<br>
+       {{ review.updated_at }} 수정
+      </span>
+      </p>
+      <br>
+      <p class="content">{{ review.content }}</p>
+      <!-- 리뷰 추천 -->
+      <span class="commend">
+      {% with review_like_users=review.like_users.all %}
+        {% if request.user.is_authenticated %}
+          {% if request.user in review_like_users %}
+            <a href="{% url 'movies:like_review' movie.pk review.pk %}">
+            <i class="far fa-thumbs-up fa-lg" style="color: blue;"></i>
+            </a>
+          {% else %}
+            <a href="{% url 'movies:like_review' movie.pk review.pk %}">
+            <i class="far fa-thumbs-up fa-lg" style="color: grey;"></i>
+            </a>
+          {% endif %}
+        {% endif %}
+          <span>{{ review_like_users|length }}명이 이 리뷰를 추천합니다.</span>
+      </span>
+      {% endwith %}
+      {% if review.user == request.user %}
+      <div class="text-right d-flex justify-content-end">
+        <a href="{% url 'movies:review_update' movie.pk review.pk %}"><button class="btn btn-secondary mx-2">수정</button></a>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal">삭제</button>
+      </div>
+      {% endif %}
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title check-text" id="exampleModalLabel">확인 메시지</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body d-flex justify-content-start">
+              <p class="check-text">정말 삭제하시겠습니까?</p>
+            </div>
+            <div class="modal-footer">
+            <form action="{% url 'movies:review_delete' movie.pk review.pk %}" method="POST" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary">삭제</button>
+            </form>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <br>
+      <hr>
+    </div>
+  </div>
+  <div class="comment-body">
+    <div class="d-flex justify-content-start">
+    <a href="{% url 'movies:comment_create' movie.pk review.pk %}">
+      <button class="btn btn-primary my-3 ml-4 btn-sm"><i class="far fa-comment"></i>　댓글 작성</button>
+    </a>
+    </div>
+    {% for comment in review.comment_set.all %}
+    <div>
+      <p class="ml-4 mt-2">
+        <i class="far fa-user"></i> <span>{{ comment.user.username }}　</span>
+        {{ comment.content }}
+        <span class="written mr-4">
+       {{ comment.created_at }} 작성 |
+        {{ comment.updated_at }} 수정
+      </span>
+      </p>
+    </div>
+    {% if comment.user == request.user %}
+    <div class="text-right d-flex justify-content-end mr-4">
+      <a href="{% url 'movies:comment_update' movie.pk review.pk comment.pk %}"><button class="btn btn-secondary mx-2 btn-sm">수정</button></a>
+      <form action="{% url 'movies:comment_delete' movie.pk review.pk comment.pk%}" method="POST" class="d=inline">
+        {% csrf_token %}
+        <button class="btn btn-secondary btn-sm">삭제</button>
+      </form>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+<style>
+  h1 {
+  font-family:'Jeju Gothic', sans-serif;
+}
+  .cover {
+      width: 984px;
+      height: 570px;
+      position: relative;
+  }
+
+  .cover::after {
+      background-image: url('{{ back_img }}');
+      border-radius: 7px;
+      width: 984px;
+      height: 570px;
+      background-repeat: no-repeat;
+      background-size:cover;
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      opacity: 0.26;
+  }
+  .comment-body {
+    width: 984px;
+  }
+
+  .check-text {
+    color: black;
+  }
+
+  .entire {
+    font-family: 'Nanum Gothic', sans-serif;
+  }
+
+  .written {
+    color: grey;
+    float: right;
+    /*text-align: right;*/
+  }
+
+  .content {
+    margin: 0 0 15px 10px;
+    font-size: 18px;
+  }
+
+ .commend {
+  float: left;
+  margin: 15px 0 0 0;
+}
+
+
+</style>
+{% endblock %}

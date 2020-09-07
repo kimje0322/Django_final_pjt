@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load bootstrap_pagination %}
+
+{% block body %}
+  <div class="container">
+    <div class="row m-auto">
+       {% for movie in page_obj %}
+      <div class="card col-2.5 mx-auto mt-3 card-color bg-color" style="width:200px">
+        <a href="{% url 'movies:movie_detail' movie.pk %}"><img src="https://image.tmdb.org/t/p/w342/{{ movie.poster_path }}" class="card-img-top img-fluid" style="height: 300px" alt="{{ movie.title }}"></a>
+          <div class="card-body">
+            <h5 class="card-text text-center ">{{ movie.title }}
+              <span class="badge badge-success">
+                {{ movie.vote_average }}
+              </span>
+            </h5>
+          </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+
+  <div class="mt-5 d-flex justify-content-center pagination-color">
+      {% bootstrap_paginate page_obj range=5 previous_label="이전" next_label="다음" %}
+  </div>
+
+<style>
+  .card-text {
+  font-family: 'Nanum Gothic', sans-serif;
+  }
+  .card:hover {
+    background-color: #E2E2E2;
+  }
+</style>
+
+{% endblock %}

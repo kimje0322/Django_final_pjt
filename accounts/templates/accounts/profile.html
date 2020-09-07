@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block body %}
+  <h1><i class="fas fa-user"></i> {{ user.username }}님의 프로필</h1>
+  <br>
+  <div class="container">
+  {% if request.user == user %}
+  <!-- 나의 활동 > 좋아요한 영화, 추천한 리뷰 -->
+    <h4><i class="fas fa-heart fa-md" style="color:red" ></i> 좋아요한 영화</h4>
+    {% for movie in user.like_movies.all %}
+    <ul>
+      <a class="text-decoration-none" href="{% url 'movies:movie_detail' movie.pk %}">
+        <li class="pro-content text-color">{{ movie.title }} ({{ movie.vote_average }})</li>
+      </a>
+    </ul>
+    {% endfor %}
+    <hr>
+    <a class="text-decoration-none" href="{% url 'accounts:scrap' user.pk %}"><h4 class="text text-color" style="color:black;"><i class="fas fa-bookmark fa-md scrap" style="color: blue;"></i> 스크랩 보기</h4></a>
+    <hr>
+    <h4><i class="fas fa-poll-h"></i> 작성 리뷰 보기</h4>
+    {% for review in user.review_set.all %}
+    <!--<ul>-->
+    <!--  <a href="{% url 'movies:review_detail' review.movie.pk review.pk %}">-->
+    <!--    <li>{{ review.movie.title }} : {{ review.title }}</li>-->
+    <!--  </a>-->
+    <!--</ul>-->
+    <a class="pro-content text-decoration-none" href="{% url 'movies:review_detail' review.movie.pk review.pk %}">
+      <div class="myreview bg-color pb-2">
+        <hr>
+        <div class="row">
+          <div class="col-2 review-img">
+            <img src="https://image.tmdb.org/t/p/w200{{ review.movie.poster_path }}" alt="{{ review.movie.title }} 리뷰" class="r-img">
+          </div>
+          <div class="col-10 pro-content text-color">
+            <h5>{{ review.movie.title }}</h5>
+            <p>{{ review.title }}</p>
+            <!--<span>작성시간 : {{ review.created_at }}</span>-->
+            <!--<br>-->
+            <!--<span>수정시간 : {{ review.created_at }}</span>-->
+
+          </div>
+        </div>
+      </div>
+
+    </a>
+    {% endfor %}
+
+    <hr>
+    <h4><i class="far fa-comment"></i> 작성 댓글 보기</h4>
+    {% for comment in user.comment_set.all %}
+    <ul>
+      <a class="text-decoration-none" href="{% url 'movies:review_detail' comment.review.movie.pk comment.review.pk %}">
+        <li class="pro-content text-color"> [{{ comment.review.title }}] {{ comment.content }}</li>
+      </a>
+    </ul>
+    {% endfor %}
+  {% endif %}
+</div>
+<style>
+  .text-color {
+    color: black;
+  }
+  .myreview:hover {
+    background-color: #E2E2E2;
+  }
+  .myreview > hr {
+    margin-top: 0;
+  }
+  .review-img > img {
+    width: 50px;
+    height: 70px;
+  }
+
+  .like-movie {
+    color: black;
+  }
+
+ .r-img {
+    text-align: right
+ }
+
+  h1, h4 {
+    font-family: 'Jeju Gothic', sans-serif;
+  }
+  h5 {
+    font-family: 'Jeju Gothic', sans-serif;
+  }
+  .pro-lst {
+    font-family: 'Nanum Gothic', sans-serif;
+  }
+</style>
+{% endblock %}

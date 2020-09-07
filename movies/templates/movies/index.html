@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% load bootstrap4 %}
+{% block home %}
+  <!--<h1>Home</h1>-->
+  <div id="carouselExampleIndicators" class="carousel slide carousel-body" data-ride="carousel">
+    <div class="container">
+    <div class="carousel-indicators d-flex justify-content-center pt-3">
+      <a class="text-decoration-none active" data-target="#carouselExampleIndicators" data-slide-to="0" href="#"><h5 class="carousel-text carousel-btn">추천영화</h5></a>
+      <a class="text-decoration-none" data-target="#carouselExampleIndicators" data-slide-to="1" href="#"><h5 class="carousel-text carousel-btn ">평점순</h5></a>
+      <a class="text-decoration-none" data-target="#carouselExampleIndicators" data-slide-to="2" href="#"><h5 class="carousel-text carousel-btn">개봉순</h5></a>
+    </div>
+    <div class="carousel-inner" >
+      <div class="carousel-item active ">
+        <div class="row mx-auto p-3">
+          {% for movie in recommend_movies %}
+            <div class="col-2.5 mx-auto pt-2 my_poster">
+              <a class="carousel-img" href="{% url 'movies:movie_detail' movie.pk %}">
+                <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" class="card-img-top" alt="{{ movie.title }} 포스터" style="height: 300px;">
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row mx-auto p-3">
+          {% for movie in movies %}
+            <div class="col-2.5 mx-auto pt-2 my_poster">
+              <a class="carousel-img" href="{% url 'movies:movie_detail' movie.pk %}">
+                <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" class="card-img-top" alt="{{ movie.title }} 포스터" style="height: 300px;">
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="carousel-item">
+        <div class="row mx-auto p-3">
+          {% for movie in latest_movies %}
+            <div class="col-2.5 mx-auto pt-2 my_poster">
+              <a class="carousel-img" href="{% url 'movies:movie_detail' movie.pk %}">
+                <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" class="card-img-top" alt="{{ movie.title }} 포스터" style="height: 300px;">
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+    </div>
+  </div>
+
+  <!-- 영화 예고편 -->
+  <div class="container my-5 py-5">
+    <h2><i class="fab fa-youtube" style="color:red;"></i> 영화 예고편</h2>
+    <div class="d-flex justify-content-between my-3">
+    {% for movie, movie_url in MOVIE_URL %}
+      <div class="video">
+        <iframe class="movie-video" width="350" height="200" src="{{ movie_url }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <h5 class="text-center">{{ movie.title }}</h5>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+   <!--최근에 달린 리뷰-->
+  <div class="review-body">
+    <div class="container my-5">
+      <h2 class="mb-3"><i class="fas fa-poll-h"></i> 최근 리뷰</h2>
+      <div class="row" >
+        <div class="col-4 top-review-img">
+          <a href="{% url 'movies:review_detail' latest_review.movie.pk latest_review.pk %}"><img src="https://image.tmdb.org/t/p/w300{{ latest_review.movie.poster_path }}" alt="{{ latest_review.movie.title }} poster"></a>
+        </div>
+        <div class="col-8 review-content">
+          <h4 class="r-m-title"><i class="fas fa-film"></i> {{ latest_review.movie.title }}</h4>
+          <h2>{{ latest_review.title }}</h2>
+          <hr class="review-line">
+          <p>{{ latest_review.content }}</p>
+          <div class="d-flex justify-content-center mt-5">
+            {% for review in reviews %}
+              <div class="review-img mx-auto">
+                <a href="{% url 'movies:review_detail' review.movie.pk review.pk %}"><img class="mx-auto" src="https://image.tmdb.org/t/p/w200{{ review.movie.poster_path }}" alt="{{ review.movie.title }} poster"></a>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <style>
+    .carousel-body {
+      background-color: #252121;
+      padding-bottom: 30px;
+      margin-bottom: 10px;
+      /*background-color: #252451;*/
+    }
+    .carousel-indicators {
+      position: relative;
+    }
+    .carousel-indicators > .active > h5 {
+      color: red;
+      /*border-bottom: 1px solid red;*/
+    }
+    .carousel-btn {
+      font-size: 25px;
+      color: white;
+      font: bold;
+      margin: 10px;
+    }
+    .carousel-btn:hover {
+      /*border-bottom: 1px solid red;*/
+      color: red;
+    }
+    .carousel-img > img {
+      border-radius: 7px;
+    }
+    .my_poster:hover {
+      display: inline-block;
+      margin: 0 0.5rem;
+      animation: pulse;
+      animation-duration: 1s;
+    }
+    .r-m-title {
+      font-family: 'Nanum Gothic', sans-serif;
+    }
+    h2 {
+      font-family: 'Jeju Gothic', sans-serif;
+    }
+    h5 {
+      font-family: 'Jeju Gothic', sans-serif;
+    }
+    .video > iframe {
+      border-radius: 10px;
+    }
+    .review-body {
+      background-color: #252451;
+      padding: 30px 30px;
+      color: white;
+    }
+    .review-line {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .review-img > a > img {
+      width: 150px;
+      height: 220px;
+      border-radius: 7px;
+    }
+    .review-img > a > img:hover {
+      display: inline-block;
+      margin: 0 0.5rem;
+      animation: fadeIn;
+      animation-duration: 1s;
+    }
+    .top-review-img > a > img {
+      border-radius: 7px;
+    }
+    .top-review-img > a > img:hover {
+      display: inline-block;
+      margin: 0 0.5rem;
+      animation: fadeIn;
+      animation-duration: 1s;
+    }
+  </style>
+{% endblock %}
